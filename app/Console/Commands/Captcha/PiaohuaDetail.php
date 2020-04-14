@@ -168,7 +168,7 @@ class PiaohuaDetail extends Command
                     }
                     if ($zz = strstr($div->plaintext,'◎主　　演')){
                         $z = substr($zz,strlen('◎主　　演'));
-
+                        $zhuyan = [];
                         $zhuyan[] = $this->getDName($z);
                         $i++;
                         while (strstr($divs[$i]->plaintext,'	　　　　')) {
@@ -189,6 +189,7 @@ class PiaohuaDetail extends Command
                             $t = trim($t);
                             while (empty($t)) {
                                 $i++;
+                                if (!isset($divs[$i])) continue;
                                 $t = trim($divs[$i]->plaintext);
                                 $t = str_replace('&nbsp;','',$t);
                                 $t = trim($t);

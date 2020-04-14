@@ -13,7 +13,7 @@ class TagController extends Controller
     {
         $articles = $tag->articles()
             ->orderBy('created_at', 'desc')
-            ->with(['category', 'tags'])
+            ->with(['cates', 'tags'])
             ->paginate(10);
 
         $head = [

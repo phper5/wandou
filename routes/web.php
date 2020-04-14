@@ -9,7 +9,14 @@ Route::namespace('Home')->name('home.')->group(function () {
         Route::get('article/{article}/{slug?}', 'ArticleController@show')->name('show');
         Route::get('search', 'ArticleController@search')->name('search');
     });
+//    Route::get('area/{area}/{slug?}', function (\Illuminate\Http\Request $request){
+//        print_r($request->input('area'));
+//        return 123;
+//    })->name('category.show');
     Route::get('category/{category}/{slug?}', 'CategoryController@show')->name('category.show');
+    Route::get('area/{area}', 'AreaController@show')->name('area.show');
+    Route::get('actor/{actor}/{slug?}', 'ActorController@show')->name('actor.show');
+    Route::get('release/{release}', 'ReleaseController@show')->name('release.show');
     Route::get('tag/{tag}/{slug?}', 'TagController@show')->name('tag.show');
     Route::get('note', 'NoteController@index')->name('note.index');
     Route::get('openSource', 'OpenSourceController@index')->name('openSource.index');
@@ -20,12 +27,12 @@ Route::namespace('Home')->name('home.')->group(function () {
     });
     Route::middleware('auth.socialite')->group(function () {
         Route::get('socialiteUser/{socialiteUser}', 'SocialiteUserController@show')->name('socialiteUser.show');
-        Route::post('comment', 'CommentController@store')->name('comment.store');
         Route::prefix('like')->name('like.')->group(function () {
             Route::post('store', 'LikeController@store')->name('store');
             Route::delete('destroy', 'LikeController@destroy')->name('destroy');
         });
     });
+    Route::post('comment', 'CommentController@store')->name('comment.store');
 });
 
 // auth

@@ -39,12 +39,14 @@ return [
             'driver' => 'stack',
             'channels' => ['daily'],
             'ignore_exceptions' => false,
+            'permission' => 0777,
         ],
 
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
+            'permission' => 0777,
         ],
 
         'daily' => [
@@ -52,6 +54,7 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
             'days' => 365,
+            'permission' => 0777,
         ],
 
         'slack' => [
@@ -60,6 +63,7 @@ return [
             'username' => 'Laravel Log',
             'emoji' => ':boom:',
             'level' => 'critical',
+            'permission' => 0777,
         ],
 
         'papertrail' => [
@@ -89,6 +93,7 @@ return [
         'errorlog' => [
             'driver' => 'errorlog',
             'level' => 'debug',
+            'permission' => 0777,
         ],
 
         'null' => [
@@ -98,6 +103,7 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+            'permission' => 0777,
         ],
     ],
 

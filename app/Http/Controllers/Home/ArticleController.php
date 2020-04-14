@@ -21,7 +21,7 @@ class ArticleController extends Controller
             'cover', 'is_top', 'created_at'
         )
             ->orderBy('created_at', 'desc')
-            ->with(['category', 'tags'])
+            ->with(['cates', 'tags'])
             ->paginate(10);
 
         $head = [
@@ -63,7 +63,7 @@ class ArticleController extends Controller
             ->first();
 
         $comment     = $commentModel->getDataByArticleId($article->id);
-        $category_id = $article->category->id;
+        //$category_id = $article->cates[0]->id;
 
         /** @var \App\Models\SocialiteUser|null $socialiteUser */
         $socialiteUser = auth()->guard('socialite')->user();
@@ -75,7 +75,7 @@ class ArticleController extends Controller
         }
 
         $likes       = $article->likers()->get();
-        $assign      = compact('category_id', 'article', 'prev', 'next', 'comment', 'is_liked', 'likes');
+        $assign      = compact('article', 'prev', 'next', 'comment', 'is_liked', 'likes');
 
         return view('home.index.article', $assign);
     }
@@ -96,7 +96,7 @@ class ArticleController extends Controller
         )
             ->whereIn('id', $id)
             ->orderBy('created_at', 'desc')
-            ->with(['category', 'tags'])
+            ->with(['cates', 'tags'])
             ->paginate(10);
 
         $head = [

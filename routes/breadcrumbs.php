@@ -15,7 +15,18 @@ Breadcrumbs::for('home.category.show', function (BreadcrumbsGenerator $trail, Ca
     $trail->parent('home.article.index');
     $trail->push($category->name, route('home.category.show', $category->id));
 });
-
+Breadcrumbs::for('home.area.show', function (BreadcrumbsGenerator $trail, $string) {
+    $trail->parent('home.article.index');
+    $trail->push($string, route('home.area.show', $string));
+});
+Breadcrumbs::for('home.release.show', function (BreadcrumbsGenerator $trail, $string) {
+    $trail->parent('home.article.index');
+    $trail->push($string, route('home.release.show',$string));
+});
+Breadcrumbs::for('home.actor.show', function (BreadcrumbsGenerator $trail, \App\Models\Actor $actor) {
+    $trail->parent('home.article.index');
+    $trail->push($actor->name, route('home.release.show',$actor->id));
+});
 Breadcrumbs::for('home.tag.show', function (BreadcrumbsGenerator $trail, Tag $tag) {
     $trail->parent('home.article.index');
     $trail->push($tag->name, route('home.tag.show', $tag->id));
@@ -42,7 +53,7 @@ Breadcrumbs::for('home.site.index', function (BreadcrumbsGenerator $trail) {
 });
 
 Breadcrumbs::for('home.article.show', function (BreadcrumbsGenerator $trail, Article $article) {
-    $trail->parent('home.category.show', $article->category);
+    $trail->parent('home.category.show', $article->cates[0]);
     $trail->push($article->title, route('home.tag.show', $article->id));
 });
 

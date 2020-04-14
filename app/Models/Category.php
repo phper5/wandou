@@ -47,7 +47,8 @@ class Category extends Base
      */
     public function articles()
     {
-        return $this->hasMany(Article::class);
+        return $this->belongsToMany(Article::class, 'article_cates');
+
     }
 
     public function getUrlAttribute()

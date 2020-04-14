@@ -36,6 +36,7 @@
         "iidestiny/laravel-filesystem-oss": "^1.2",
         "intervention/image": "^2.4",
         "jenssegers/agent": "^2.6",
+        "kub-at/php-simple-html-dom-parser": "^1.9",
         "laravel/framework": "^7.0",
         "laravel/passport": "^8.0",
         "laravel/socialite": "^4.1",
@@ -55,7 +56,8 @@
         "socialiteproviders/vkontakte": "^4.0",
         "socialiteproviders/weibo": "^3.0",
         "spatie/laravel-backup": "^6.3",
-        "stichoza/google-translate-php": "^4.0"
+        "stichoza/google-translate-php": "^4.0",
+        "sunra/php-simple-html-dom-parser": "^1.5"
     },
     "require-dev": {
         "baijunyao/laravel-test-support": "^4.2",
@@ -89,7 +91,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "KubAT\\PhpSimple\\": "packages/php-simple-html-dom-parser/src/KubAT/PhpSimple"
         },
         "classmap": [
             "database/seeds",

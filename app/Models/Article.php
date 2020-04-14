@@ -77,9 +77,13 @@ class Article extends Base
         return str_replace('<img src="/uploads/article', '<img src="' . cdn_url('uploads/article'), $value);
     }
 
-    public function category()
+//    public function category()
+//    {
+//        return $this->belongsTo(Category::class);
+//    }
+    public function cates()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'article_cates');
     }
 
     public function tags()
@@ -90,6 +94,34 @@ class Article extends Base
     public function article_histories()
     {
         return $this->hasMany(ArticleHistory::class);
+    }
+    public function alias()
+    {
+        return $this->hasMany(ArticleArea::class);
+    }
+    public function areas()
+    {
+        return $this->hasMany(ArticleArea::class);
+    }
+    public function directors()
+    {
+        return $this->hasMany(ArticleDirector::class);
+    }
+
+    public function downloads()
+    {
+        return $this->hasMany(ArticleDownload::class);
+    }
+    public function actors()
+    {
+        /*
+         * 第一个参数：要关联的表对应的类
+         * 第二个参数：中间表的表名
+         * 第三个参数：当前表跟中间表对应的外键
+         * 第四个参数：要关联的表跟中间表对应的外键
+         * */
+        return $this->belongsToMany(Actor::class,'article_actors','article_id','actor_id');
+
     }
 
     public function searchArticleGetId(string $wd)

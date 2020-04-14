@@ -21,7 +21,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            @if(Str::isTrue(config('bjyblog.logo_with_php_tag')))
+            @if(0 && Str::isTrue(config('bjyblog.logo_with_php_tag')))
                 <a class="navbar-brand" href="/">
                     <div class="hidden-xs b-nav-background"></div>
                     <ul class="b-logo-code">
@@ -54,20 +54,6 @@
                         <a href="{{ url($v->url) }}">{{ $v->name }}</a>
                     </li>
                 @endforeach
-            </ul>
-            <ul id="b-login-word" class="nav navbar-nav navbar-right">
-                @if(auth()->guard('socialite')->check())
-                    <li class="b-user-info" data-user-id="{{ auth()->guard('socialite')->user()->id }}">
-                        <span><img class="b-head_img" src="{{ auth()->guard('socialite')->user()->avatar }}" alt="{{ auth()->guard('socialite')->user()->name }}" title="{{ auth()->guard('socialite')->user()->name }}" /></span>
-                        <span class="b-nickname">{{ auth()->guard('socialite')->user()->name }}</span>
-                        <span><a href="{{ url('auth/socialite/logout') }}">{{ __('Sign out') }}</a></span>
-                    </li>
-                @else
-                    <li class="b-nav-cname b-nav-login">
-                        <div class="hidden-xs b-login-mobile"></div>
-                        <a class="js-login-btn" href="javascript:;">{{ __('Sign In') }}</a>
-                    </li>
-                @endif
             </ul>
         </div>
     </div>
@@ -132,84 +118,15 @@
                     @endforeach
                 </p>
             </div>
-            <div class="b-comment-list">
-                <h4 class="b-title">{{ __('Recent Comments') }}</h4>
-                <div>
-                    @foreach($latestComments as $comment)
-                        <ul class="b-new-comment @if($loop->first) b-new-commit-first @endif">
-                            <img class="b-head-img bjy-lazyload" src="{{ cdn_url('uploads/avatar/default.jpg') }}" data-src="{{ cdn_url($comment->socialiteUser->avatar) }}" alt="{{ $comment->socialiteUser->name }}">
-                            <li class="b-nickname">
-                                {{ $comment->socialiteUser->name }}<span>{{ $comment->created_at->diffForHumans() }}</span>
-                            </li>
-                            <li class="b-nc-article">
-                                {{ __('Comment') }} <a href="{{ $comment->article->url }}#comment-{{ $comment->id }}" target="{{ config('bjyblog.link_target') }}">{{ $comment->article->sub_title }}</a>
-                            </li>
-                            <li class="b-content">
-                                {!! $comment->sub_content !!}
-                            </li>
-                        </ul>
-                    @endforeach
-                </div>
-            </div>
-            <div class="b-link">
-                <h4 class="b-title">{{ __('Links') }}</h4>
-                <p>
-                    @foreach($friendshipLink as $v)
-                        <a class="b-link-a" href="{{ $v->url }}" target="{{ config('bjyblog.link_target') }}"><span class="fa fa-link b-black"></span> {{ $v->name }}</a>
-                    @endforeach
-                        <a class="b-link-a" href="{{ url('site') }}"><span class="fa fa-link b-black"></span> {{ __('More') }} </a>
-                </p>
-            </div>
+
+
         </div>
     </div>
 </div>
 
 <footer id="b-foot">
     <div class="container">
-        <div class="row b-content">
-            <dl class="col-xs-12 col-sm-6 col-md-{{ $homeFootColNumber }} col-lg-{{ $homeFootColNumber }}">
-                <dt>{{ __('Rights') }}</dt>
-                <dd>{{ __("Licenses") }}：<a rel="nofollow" href="https://creativecommons.org/licenses/by{{ config('bjyblog.licenses.allow_commercial') . config('bjyblog.licenses.allow_adaptation') }}/4.0/deed.{{ config('bjyblog.licenses.language') }}" target="{{ config('bjyblog.link_target') }}">CC BY-NC 4.0</a></dd>
-                <dd>{{ __('Copyright') }}：© 2014-{{ date('Y') }}</dd>
-                @if(!empty(config('bjyblog.admin_email')))
-                    <dd>{{ __('Contact Email') }}：<a href="mailto:{!! config('bjyblog.admin_email') !!}">{!! config('bjyblog.admin_email') !!}</a></dd>
-                @endif
-                @if(!empty(config('bjyblog.icp')) && config('app.locale') === 'zh-CN')
-                    <dd>{{ __('ICP') }}：<a rel="nofollow" href="http://www.beian.miit.gov.cn" target="{{ config('bjyblog.link_target') }}">{{ config('bjyblog.icp') }}</a></dd>
-                @endif
-            </dl>
-
-            <dl class="col-xs-12 col-sm-6 col-md-{{ $homeFootColNumber }} col-lg-{{ $homeFootColNumber }}">
-                <dt>{{ __('Structure') }}</dt>
-                <dd>{{ __('Project Name') }}：<a rel="nofollow" href="https://github.com/baijunyao/laravel-bjyblog" target="{{ config('bjyblog.link_target') }}">laravel-bjyblog</a></dd>
-                <dd>{{ __('Blog Version') }}：<a rel="nofollow" href="https://github.com/baijunyao/laravel-bjyblog" target="{{ config('bjyblog.link_target') }}">{{ config('bjyblog.version') }}-{{ config('bjyblog.branch') }}</a></dd>
-                <dd>{{ __('Framework Version') }}：<a rel="nofollow"  href="https://github.com/laravel/framework" target="{{ config('bjyblog.link_target') }}">laravel-v{{ \Illuminate\Foundation\Application::VERSION }}</a></dd>
-                <dd>{{ __('Project Author') }}：<a href="https://baijunyao.com">{{ __('Junyao Bai') }}</a></dd>
-                <dd>{{ __('Theme Name') }}：<a rel="nofollow" href="https://github.com/baijunyao/blog-theme-blueberry">blog-theme-blueberry</a></dd>
-                <dd>{{ __('Theme Author') }}：<a href="https://baijunyao.com">{{ __('Junyao Bai') }}</a></dd>
-            </dl>
-
-            <dl class="col-xs-12 col-sm-6 col-md-{{ $homeFootColNumber }} col-lg-{{ $homeFootColNumber }}">
-                <dt>{{ __('Counts') }}</dt>
-                <dd>{{ __('Article Counts') }}：{{ $articleCount }}</dd>
-                <dd>{{ __('Comment Counts') }}：{{ $commentCount }}</dd>
-                <dd>{{ __('User Counts') }}：{{ $socialiteUserCount }}</dd>
-                <dd>{{ __('Note Counts') }}：{{ $chatCount }}</dd>
-            </dl>
-
-            @if($homeFootColNumber === 3)
-                <dl class="col-xs-12 col-sm-12 col-md-{{ $homeFootColNumber }} col-lg-{{ $homeFootColNumber }} b-social">
-                    <dt>{{ __('Social') }}</dt>
-                    <dd class="b-small-logo">
-                        @foreach(config('bjyblog.social_links') as $name => $link)
-                            @if($link !== '')
-                                <a rel="nofollow" href="{{ $link }}" target="{{ config('bjyblog.link_target') }}"><img src="{{ url("images/home/social-$name.png") }}" alt="{{ $name }}"></a>
-                            @endif
-                        @endforeach
-                    </dd>
-                </dl>
-            @endif
-        </div>
+        <div class="row b-content">{{ __('Copyright') }}：© 2014-{{ date('Y') }} </div>
     </div>
     <a class="go-top fa fa-angle-up animated jello" href="javascript:;"></a>
 </footer>

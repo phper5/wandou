@@ -40,16 +40,17 @@
                 </h3>
                 <div class="col-xs-12 col-md-12 col-lg-12 b-date">
                     <ul class="row">
-                        <li class="col-xs-5 col-md-2 col-lg-3">
-                            <i class="fa fa-user"></i> {{ $v->author }}
-                        </li>
+<!--
                         <li class="col-xs-7 col-md-3 col-lg-3">
                             <i class="fa fa-calendar"></i> {{ $v->created_at }}
                         </li>
-                        <li class="col-xs-5 col-md-2 col-lg-2">
-                            <i class="fa fa-list-alt"></i> <a href="{{ $v->category->url }}" target="{{ config('bjyblog.link_target') }}">{{ $v->category->name }}</a>
+                        -->
+                        <li class="col-xs-5 col-md-2 col-lg-12">
+                            <?php foreach ($v->cates as $cate) {
+                               echo '<i class="fa fa-list-alt"></i> <a href="'.$cate->url.'" target="'.config('bjyblog.link_target').'">'.$cate->name.'</a> ';
+                            }?>
                         </li>
-                        <li class="col-xs-7 col-md-5 col-lg-4 "><i class="fa fa-tags"></i>
+                        <li class="col-xs-7 col-md-7 col-lg-12 "><i class="fa fa-tags"></i>
                             @foreach($v->tags as $n)
                                 <a class="b-tag-name" href="{{ $n->url }}" target="{{ config('bjyblog.link_target') }}">{{ $n->name }}</a>
                             @endforeach
@@ -62,7 +63,7 @@
                         <div class="col-sm-6 col-md-6 col-lg-4 hidden-xs b-oa-thumbnail">
                             <figure class="b-oa-pic b-style1">
                                 <a href="{{ $v->url }}" target="{{ config('bjyblog.link_target') }}">
-                                    <img class="bjy-lazyload" src="{{ cdn_url('/images/home/loading.gif') }}" data-src="{{ cdn_url($v->cover)  }}" alt="{{ config('bjyblog.alt_word') }}" title="{{ config('bjyblog.alt_word') }}">
+                                    <img class="bjy-lazyload" src="{{ cdn_url('images/home/loading.gif') }}" data-src="{{ cdn_url($v->cover)  }}" alt="{{ config('bjyblog.alt_word') }}" title="{{ config('bjyblog.alt_word') }}">
                                 </a>
                                 <figcaption>
                                     <a href="{{ url('article', [$v->id]) }}" target="{{ config('bjyblog.link_target') }}"></a>
@@ -81,7 +82,7 @@
                         <!-- 文章描述结束 -->
                     </div>
                 </div>
-                <a class=" b-readall" href="{{ $v->url }}" target="{{ config('bjyblog.link_target') }}">{{ __('Read More') }}</a>
+                <a class=" b-readall" href="{{ $v->url }}" target="{{ config('bjyblog.link_target') }}">影片详情</a>
             </div>
         @endforeach
         <!-- 循环文章列表结束 -->

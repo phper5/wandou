@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', '白俊遥博客'),
+    'name' => env('APP_NAME', '电影'),
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY'),
+    'key' => env('APP_KEY','base64:5U8Rdduu907zfEhCih/0FwD1UELOq8MijHnr1oOimIk='),
 
     'cipher' => 'AES-256-CBC',
 

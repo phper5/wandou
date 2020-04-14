@@ -12,7 +12,7 @@
         @if(Str::isTrue(config('bjyblog.breadcrumb')))
             <div class="row">
                 <div class="col-xs-12 col-md-12 col-lg-12 b-breadcrumb">
-                    {{ Breadcrumbs::render() }}
+                   <?php //echo Breadcrumbs::render()  ?>
                 </div>
             </div>
         @endif
@@ -24,10 +24,42 @@
             <h1 class="col-xs-12 col-md-12 col-lg-12 b-title">{{ $article->title }}</h1>
             <div class="col-xs-12 col-md-12 col-lg-12">
                 <ul class="row b-metadata">
-                    <li class="col-xs-5 col-md-2 col-lg-3"><i class="fa fa-user"></i> {{ $article->author }}</li>
-                    <li class="col-xs-7 col-md-3 col-lg-3"><i class="fa fa-calendar"></i> {{ $article->created_at }}</li>
-                    <li class="col-xs-5 col-md-2 col-lg-2"><i class="fa fa-list-alt"></i> <a href="{{ $article->category->url }}">{{ $article->category->name }}</a>
-                    <li class="col-xs-7 col-md-5 col-lg-4 "><i class="fa fa-tags"></i>
+                    <!-- col-xs-7 col-md-3 col-lg-3 -->
+                    <?php
+                    $alias = $article->alias;
+                    if (count($alias)) {
+                        ?><li class="col-xs-12">别名 <?php foreach ($alias as $a) { echo $a->title.'xxxxx';} ?></li><?php
+                    }
+                    ?>
+                    <?php
+                    $areas = $article->areas;
+                    if (count($areas)) {
+                    ?>
+                    <li class="col-xs-12">地区 <?php foreach ($areas as $a) {
+                            echo '<a href="'.route('home.area.show', ['area' => $a->title]).'">'.$a->title.'</a> ';
+                        } ?></li>
+            <?php
+                    }
+                    ?>
+
+
+
+                    <li class="col-xs-12">类别
+                        <?php foreach ($article->cates as $cate) {
+                            echo '<a href="'.$cate->url.'" >'.$cate->name.'</a> ';
+                        }?>
+
+                    <li class="col-xs-12">时间
+                        <?php
+                            if ($article->release_time) {
+                                echo '<a href="'.route('home.release.show', ['release' => $article->release_time]).'">'.$article->release_time.'</a>';
+                            }
+                        ?>
+                    <li class="col-xs-12">导演 <?php foreach ($article->directors as $a) { echo $a->name;} ?></li>
+                    <li class="col-xs-12">主演 <?php foreach ($article->actors as $a) {
+                            echo '<a href="'.route('home.actor.show', ['actor'=>$a->id,'slug' => $a->name]).'">'.$a->name.'</a> ';
+                    } ?></li>
+                    <li class="col-xs-12"><i class="fa fa-tags"></i>
                         @foreach($article->tags as $tag)
                             <a class="b-tag-name" href="{{ $tag->url }}">{{ $tag->name }}</a>
                         @endforeach
@@ -35,7 +67,18 @@
                 </ul>
             </div>
             <div class="col-xs-12 col-md-12 col-lg-12 b-content-word">
+                <div class="js-content">
+                    <img class="bjy-lazyload" src="{{ cdn_url('images/home/loading.gif') }}" data-src="{{ cdn_url($article->cover)  }}" alt="{{ config('bjyblog.alt_word') }}" title="{{ config('bjyblog.alt_word') }}">
+                </div>
                 <div class="js-content">{!! $article->html !!}</div>
+                <p class="b-h-20"></p>
+                <div class="row download">
+                    <div class="title">下载地址</div>
+                    <ul class="row">
+                        <?php foreach ($article->downloads as $a) { echo '<li class="col-xs-12">'.$a->url.'<li>';} ?>
+
+                    </ul>
+                </div>
                 <p class="b-h-20"></p>
                 <p class="b-copyright">
                     {!! htmlspecialchars_decode(config('bjyblog.copyright_word')) !!}
@@ -67,6 +110,7 @@
                     </li>
                 </ul>
             </div>
+
         </div>
         <!-- 引入通用评论开始 -->
         <script>
@@ -90,6 +134,7 @@
                 </ul>
             </div>
         </div>
+            <!--
         <div class="row b-comment">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 b-comment-box">
                 <img class="b-head-img" src="@if(auth()->guard('socialite')->check()){{ auth()->guard('socialite')->user()->avatar }}@else{{ asset('images/home/default_head_img.gif') }}@endif" alt="{{ config('app.name') }}" title="{{ config('app.name') }}">
@@ -121,7 +166,8 @@
             @foreach($comment as $k => $v)
                 <div id="comment-{{ $v['id'] }}" class="row b-user b-parent">
                     <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1 b-pic-col">
-                        <img class="b-user-pic bjy-lazyload" src="{{ asset('uploads/avatar/default.jpg') }}" data-src="{{ asset($v['avatar']) }}" alt="{{ config('app.name') }}" title="{{ config('app.name') }}">
+                        <img class="b-user-pic bjy-lazyload" src="{{ asset('uploads/avatar/default.jpg') }}"
+                        data-src="{{ asset($v['avatar']) }}" alt="{{ config('app.name') }}" title="{{ config('app.name') }}">
                         @if($v['is_admin'] == 1)
                             <img class="b-crown" src="{{ asset('images/home/crown.png') }}" alt="{{ config('app.name') }}">
                         @endif
@@ -165,6 +211,7 @@
             @endforeach
             </div>
         </div>
+        -->
         <!-- 引入通用评论结束 -->
     </div>
     <!-- 左侧文章结束 -->
@@ -172,24 +219,24 @@
 
 @section('js')
     <script>
-        $('pre').addClass('line-numbers');
-        $('.js-content a').attr('target', "{{ config('bjyblog.link_target') }}")
-        translate = {
-            pleaseLoginToComment: "{{ __('Please login to comment') }}",
-            pleaseLoginToReply: "{{ __('Please login to reply') }}",
-            emailForNotifications: "{{ __('Email for notifications') }}",
-            pleaseLogin: "{{ __('Please login') }}",
-            reply: "{{ __('Reply') }}"
-        }
-        $.each($('.js-content img'), function (k, v) {
-            $(v).wrap(function(){
-                return "<a class='js-fluidbox' href='"+$(v).attr('src')+"'></a>"
-            });
-        })
-        emojify.run(document.querySelector('.js-content'));
-        $('.js-fluidbox').fluidbox();
-        $('#b-share-js').share(sharejsConfig);
-        $('#b-js-socials').jsSocials(jsSocialsConfig)
+        {{--$('pre').addClass('line-numbers');--}}
+        {{--$('.js-content a').attr('target', "{{ config('bjyblog.link_target') }}")--}}
+        {{--translate = {--}}
+        {{--    pleaseLoginToComment: "{{ __('Please login to comment') }}",--}}
+        {{--    pleaseLoginToReply: "{{ __('Please login to reply') }}",--}}
+        {{--    emailForNotifications: "{{ __('Email for notifications') }}",--}}
+        {{--    pleaseLogin: "{{ __('Please login') }}",--}}
+        {{--    reply: "{{ __('Reply') }}"--}}
+        {{--}--}}
+        {{--$.each($('.js-content img'), function (k, v) {--}}
+        {{--    $(v).wrap(function(){--}}
+        {{--        return "<a class='js-fluidbox' href='"+$(v).attr('src')+"'></a>"--}}
+        {{--    });--}}
+        {{--})--}}
+        {{--emojify.run(document.querySelector('.js-content'));--}}
+        {{--$('.js-fluidbox').fluidbox();--}}
+        {{--$('#b-share-js').share(sharejsConfig);--}}
+        {{--$('#b-js-socials').jsSocials(jsSocialsConfig)--}}
     </script>
     <script src="{{ asset('statics/layer-2.4/layer.js') }}"></script>
 @endsection

@@ -91,7 +91,7 @@ class ArticleController extends Controller
 
         $articles = Article::select(
             'id', 'category_id', 'title',
-            'author', 'description', 'cover',
+            'author', 'description', 'cover','thumb',
             'is_top', 'created_at'
         )
             ->whereIn('id', $id)

@@ -74,7 +74,7 @@ class PiaohuaDetail extends Command
         while ($f==1)
         {
             $f=0;
-            $list = \App\Models\Piaohua::where('type',0)->where('cate','!=','dianshiju')->limit(100)->get();
+            $list = \App\Models\Piaohua::where('type',5)->where('cate','!=','dianshiju')->limit(100)->get();
 
             foreach ($list as $item)
             {
@@ -181,16 +181,21 @@ class PiaohuaDetail extends Command
                     }
                     if (strstr($txt,'◎简')){
                         $i++;
-                        $t = trim($divs[$i]->plaintext);
-                        $t = str_replace('&nbsp;','',$t);
-                        $t = trim($t);
-                        while (empty($t)) {
-                            $i++;
+                        if (!isset($divs[$i])) {
+                            $desc = $txt;
+                        }else{
                             $t = trim($divs[$i]->plaintext);
                             $t = str_replace('&nbsp;','',$t);
                             $t = trim($t);
+                            while (empty($t)) {
+                                $i++;
+                                $t = trim($divs[$i]->plaintext);
+                                $t = str_replace('&nbsp;','',$t);
+                                $t = trim($t);
+                            }
+                            $desc =  trim($divs[$i]->plaintext);
                         }
-                        $desc =  trim($divs[$i]->plaintext);
+
                     }
                 }
                 foreach ($dom->find("div.bot  a") as $a)

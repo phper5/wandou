@@ -18,7 +18,7 @@ class ArticleController extends Controller
         $articles = Article::select(
             'id', 'category_id', 'title',
             'slug', 'author', 'description',
-            'cover', 'is_top', 'created_at'
+            'cover', 'thumb','is_top', 'created_at'
         )
             ->orderBy('created_at', 'desc')
             ->with(['cates', 'tags'])

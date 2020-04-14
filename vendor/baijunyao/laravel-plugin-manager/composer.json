@@ -1,0 +1,27 @@
+{
+    "name": "baijunyao/laravel-plugin-manager",
+    "description": "plugin manager",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "baijunyao",
+            "email": "baijunyao@baijunyao.com"
+        }
+    ],
+    "require": {
+        "baijunyao/laravel-jquery": "1.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Baijunyao\\LaravelPluginManager\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Baijunyao\\LaravelPluginManager\\PluginManagerServiceProvider"
+            ]
+        }
+    }
+}

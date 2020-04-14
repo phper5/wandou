@@ -1,0 +1,25 @@
+{
+    "name": "baijunyao/laravel-jquery",
+    "description": "laravel jquery",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "baijunyao",
+            "email": "baijunyao@baijunyao.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Baijunyao\\LaravelJquery\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Baijunyao\\LaravelJquery\\JqueryServiceProvider"
+            ]
+        }
+    }
+}

@@ -35,6 +35,14 @@ class PiaohuaNew extends Command
      */
     public function handle()
     {
+        $this->getNewItems();
+    }
+    public function getDetail()
+    {
+
+    }
+    public function getNewItems()
+    {
 
 
         $url = "https://www.piaohua.com/html/dianying.html";

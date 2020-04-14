@@ -50,6 +50,19 @@ class PiaohuaDetail extends Command
         }
         return '';
     }
+
+    public function getDName($z)
+    {
+        $z  = str_replace('&nbsp;','',$z);
+        $z  = str_replace('　','',$z);
+        if(preg_match('/[\x7f-\xff]+/', $z)){
+            $pattern = '/[a-zA-Z\.]/u';
+            $z = preg_replace($pattern, '', $z);
+        }
+        $z = trim($z);
+        $z = trim($z,"\t");
+        return $z;
+    }
     /**
      * Execute the console command.
      *
@@ -96,58 +109,46 @@ class PiaohuaDetail extends Command
                 $tags = [];
                 $niandai='';
                 $downloads = [];
-                foreach ($divs as $div)
-                {
+                $i =0;
 
+                for ($i=0;$i<count($divs);$i++)
+                {
+                    $div = $divs[$i];
                     $txt = str_replace('　','',$div->plaintext);
-//                $txt = str_replace('	','',$txt);
-//                $txt = str_replace(' ','',$txt);
                     $txt = trim($txt);
                     if (strstr($txt,'◎译名')){
-                        // echo $div;exit;
-                        // echo $txt."\n";
                         $yiming = substr($txt,strlen('◎译名'));
-                        $names[] = explode('/',$yiming);
+                        $names = explode('/',$yiming);
                     }
                     if (strstr($txt,'◎年代')){
-                        // echo $div;exit;
-//                        echo $txt."\n";
                         $yiming = substr($txt,strlen('◎年代'));
                         $niandai = $yiming;
                         if (empty($niandai)){
                             echo $item->id;
                             echo $htmlurl."\n";
-                            die('no nian dai ');
+                            //die('no nian dai ');
+                            $niandai='';
                         }
                     }
                     if (strstr($txt,'◎片名')){
-                        // echo $div;exit;
-                        //echo $txt."\n";
                         $yiming = substr($txt,strlen('◎片名'));
                         $names[] = $yiming;
                     }
                     if (strstr($txt,'◎产地')){
-                        // echo $div;exit;
-                        // echo $txt."\n";
                         $yiming = substr($txt,strlen('◎产地'));
                         $country = $yiming;
                     }
                     if (strstr($txt,'◎类别')){
-                        // echo $div;exit;
-                        //echo $txt."\n";
+
                         $yiming = substr($txt,strlen('◎类别'));
                         $cates = explode('/',$yiming);
                     }
                     if (strstr($txt,'◎IMDb链接')){
-                        // echo $div;exit;
-                        //echo $txt."\n";
                         $yiming = substr($txt,strlen('◎IMDb链接'));
                         $imdb = trim($yiming,'&nbsp;');
                     }
                     if (strstr($txt,'◎豆瓣链接')){
-
                         $douban = substr($txt,strlen('◎豆瓣链接'));
-
                     }
                     if (strstr($txt,'◎片长')){
                         $yiming = substr($txt,strlen('◎片长'));
@@ -158,6 +159,38 @@ class PiaohuaDetail extends Command
                         //echo $txt."\n";
                         $yiming = substr($txt,strlen('◎标签'));
                         $tags = explode('|',$yiming);
+                    }
+                    if ($dy = strstr($div->plaintext,'◎导　　演')){
+                        $yiming = substr($dy,strlen('◎导　　演'));
+                        $yiming  = str_replace('　','',$yiming);
+                        $yiming = trim($yiming);
+                        $daoyan = explode('/',$yiming);
+                    }
+                    if ($zz = strstr($div->plaintext,'◎主　　演')){
+                        $z = substr($zz,strlen('◎主　　演'));
+
+                        $zhuyan[] = $this->getDName($z);
+                        $i++;
+                        while (strstr($divs[$i]->plaintext,'	　　　　')) {
+                            $z = trim($divs[$i]->plaintext);
+                            $zhuyan[] =  $this->getDName($z);
+                            $i++;
+                        }
+                        $i--;
+                        continue;
+                    }
+                    if (strstr($txt,'◎简')){
+                        $i++;
+                        $t = trim($divs[$i]->plaintext);
+                        $t = str_replace('&nbsp;','',$t);
+                        $t = trim($t);
+                        while (empty($t)) {
+                            $i++;
+                            $t = trim($divs[$i]->plaintext);
+                            $t = str_replace('&nbsp;','',$t);
+                            $t = trim($t);
+                        }
+                        $desc =  trim($divs[$i]->plaintext);
                     }
                 }
                 foreach ($dom->find("div.bot  a") as $a)
@@ -198,7 +231,10 @@ class PiaohuaDetail extends Command
                     'douban'=>$douban,
                     'downloads'=>$downloads,
                     'niandai'=>$niandai,
-                    'cover'=>$cover
+                    'cover'=>$cover,
+                    'daoyan'=>$daoyan??[],
+                    'zhuyan'=>$zhuyan??[],
+                    'desc'=>$desc,
                 ];
                 $item->detail = json_encode($data);
                 $item->type=2;

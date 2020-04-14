@@ -216,7 +216,7 @@ class Piaohua extends Command
                 echo "end\n";
                 $item->type=3;
                 $item->save();
-                sleep(5);
+                sleep(1);
 
 
 

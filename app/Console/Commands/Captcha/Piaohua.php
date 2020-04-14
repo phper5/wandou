@@ -119,10 +119,10 @@ class Piaohua extends Command
             $list = \App\Models\Piaohua::where('type',2)
                 ->where('cate','!=','dianshiju')
                 ->where('cate','!=','lianxiju')
-                ->where('type',2)
+                ->where('type',5)
 //                ->where('id',14244)
-//                ->orderBy(\DB::raw('RAND()'))
-                ->orderBy('id','desc')
+                ->orderBy(\DB::raw('RAND()'))
+//                ->orderBy('id','desc')
                 ->limit(10)->get();
 
             foreach ($list as $item)

@@ -49,6 +49,7 @@ class Piaohua extends Command
         curl_setopt($ch,CURLOPT_URL,$url);
         curl_setopt($ch,CURLOPT_HEADER,false);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['X-FORWARDED-FOR:220.181.38.148', 'CLIENT-IP:220.181.38.148']);
         $header=[
             'Cookie:ll="118282"; bid=vki26dkFPvw; _pk_id.100001.4cf6=755dbb7ab0c6c5d1.1586822201.3.1586833532.1586826199.; __utma=30149280.299594622.1586822202.1586826126.1586832878.3; __utmc=30149280; __utmz=30149280.1586822202.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); __utma=223695111.774689596.1586822202.1586826131.1586832878.3; __utmc=223695111; __utmz=223695111.1586822202.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); _vwo_uuid_v2=D38CFD9F00C564B5762C5194FB867CEE9|4f33f85989667085e5543b4976313228; _pk_ses.100001.4cf6=*; ap_v=0,6.0; __utmb=30149280.0.10.1586832878; __utmb=223695111.0.10.1586832878',
             'Host: movie.douban.com',
@@ -88,6 +89,7 @@ class Piaohua extends Command
             curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
             curl_setopt($curl, CURLOPT_HEADER, 0);//返回response头部信息
         }
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['X-FORWARDED-FOR:220.181.38.148', 'CLIENT-IP:220.181.38.148']);
 
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);

@@ -148,237 +148,27 @@ class Piaohua extends Command
                 if (substr($url,-1)!='/') {
                     $url .= '/';
                 }
-                //echo '--'.$url;exit;
 
-//                try{
-//                    $dom = HtmlDomParser::file_get_html($url);
-//                }catch (\Exception $e)
-//                {
-//                    sleep(15);
-//                    $dom = HtmlDomParser::file_get_html($url);
-//                }
-                try{
-                    $string = $this->http_request($url);
-                }catch (\Exception $e)
-                {
-                    sleep(15);
-                    $string = $this->http_request($url);
-                }
-                $dom = HtmlDomParser::str_get_html($string);
-
-                $small_cover = $dom->find(".nbgnbg img",0);
-
-                $small_cover = $small_cover->src;
-                //$small_cover = $item->cover;
-                $small_cover = str_replace('webp','jpg',$small_cover);
-                $small = $this->download($small_cover,'images/cover');
-                $movie['thumb'] = $small;
-                $cover = str_replace('s_ratio_poster','l',$small_cover);
-                $cover = $this->download($cover,'images/cover');
-                $movie['cover'] = $cover;
-
-                $title = $dom->find("span[property=v:itemreviewed]",0);
-                if (!$title) {
-                    $title = $dom->find("span[property=v:itemreviewed]",0);
-                }
-                $title = $title->plaintext;
-                $movie['title'] = $title;
-                $desc = $dom->find("#link-report .all.hidden",0);
-                if (!$desc){
-                    $desc = $dom->find("#link-report",0);
-                }
-                if ($desc)
-                {
-                    $desc = $desc->plaintext;
-                }
-                else{
-                    $desc = '';
-                }
-                $movie['desc'] = trim($desc);
-                $info = $dom->find("#info",0)->nodes;
-
-
-                for ($i=0;$i<count($info);$i++)
-                {
-                    $div = $info[$i];
-
-                    $txt =  $div->plaintext;
-                    $txt = str_replace(' ','',$txt);
-                    if (strstr($txt,'导演:'))
-                    {
-                        $movie['daoyan'] = substr($txt,strlen('导演:'));
-                    }
-                    elseif (strstr($txt,'编剧:'))
-                    {
-                        $movie['bianju'] = substr($txt,strlen('编剧:'));
-                    }
-                    elseif (strstr($txt,'主演:'))
-                    {
-                        $zhuyan = substr($txt,strlen('主演:'));
-                        $movie['zhuyan'] = explode("/",$zhuyan);
-                    }
-
-                    elseif (strstr($txt,'类型')) {
-                    $cate = [];
-                        $i++;
-                        $txt = trim($info[$i]->plaintext);
-
-                        while(!strstr($txt,'地区') && !strstr($txt,'官方')&& $info[$i]->class!='pl') {
-
-                            if ($txt && $txt!='/')
-                            {
-                                $cate[]=$txt;
-                            }
-                            $i++;
-                            $txt = trim($info[$i]->plaintext);
-                        }
-                        $movie['cate'] = $cate;
-                        $i--;
-                    }
-                    elseif (strstr($txt,'地区')) {
-                        $i++;
-                        while (trim($info[$i]->plaintext) == '') {
-                            $i++;
-                        }
-                        $movie['area'] =  trim($info[$i]->plaintext);
-                    }
-                    elseif (strstr($txt,'语言')) {
-                        $i++;
-                        while (trim($info[$i]->plaintext) == '') {
-                            $i++;
-                        }
-                        $movie['language'] =  trim($info[$i]->plaintext);
-                    }
-                    elseif (strstr($txt,'上映')) {
-                        $i++;
-                        while (trim($info[$i]->plaintext) == '') {
-                            $i++;
-                        }
-                        $movie['release'] =  trim($info[$i]->plaintext);
-                    }
-                    elseif (strstr($txt,'片长')) {
-                        $i++;
-                        while (trim($info[$i]->plaintext) == '') {
-                            $i++;
-                        }
-                        $movie['duration'] =  trim($info[$i]->plaintext);
-                    }
-                    elseif (strstr($txt,'又名')) {
-                        $i++;
-                        while (trim($info[$i]->plaintext) == '') {
-                            $i++;
-                        }
-                        $movie['alias'] =  explode("/",trim($info[$i]->plaintext));
-                    }
-                    elseif (strstr($txt,'IMDb')) {
-                        $i++;
-                        while (trim($info[$i]->plaintext) == '') {
-                            $i++;
-                        }
-                        $movie['imdb'] =  trim($info[$i]->plaintext);
-                    }
-                }
-                $movie['imdb'] = $movie['imdb']??$detail['imdb']??'';
-                $movie['tags'] = $detail['tags'];
-                foreach ($detail['names'] as $name)
-                {
-                    if (is_array($name)) {
-                        foreach ($name as $n){
-                            $movie['alias'][] = $n;
-                        }
-                    }else{
-                        $movie['alias'][] = $name;
-                    }
-                }
-                $movie['downloads'] = $detail['downloads'];
-                print_r($item);
-                print_r($movie);
                 //exit;
                 $article = new Article();
-                $article->title = $movie['title'];
-                $article->html = $movie['desc'];
-                $article->markdown = $movie['desc'];
-                $article->release_time = $movie['release'];
-                $article->cover = $movie['cover'];
-                $article->thumb = $movie['thumb'];
-                $article->language = $movie['language'];
-                $article->duration = $movie['duration']??0;
-                $article->imdb = $movie['imdb'];
-                $article->slug = $movie['title'];
+                $article->title = $item->title;
+                $article->html = $item->title;
+                $article->markdown = $item->title;
+                $article->release_time = '';
+                $article->cover = $item->cover;
+                $article->thumb = $item->cover;
+                $article->language = '';
+                $article->duration = 0;
+                $article->imdb = 0;
+                $article->slug = $item->title;
+                $article->douban_url = $url;
                 $article->save();
                 $item->artice_id=$article->id;
                 $item->save();
                 //daoyan
-                $actor = Actor::where('name',$movie['daoyan'])->first();
-                if (!$actor){
-                    $actor = new Actor();
-                    $actor->name=$movie['daoyan'];
-                    $actor->save();
-                }
-                if (!ArticleDirector::where('article_id',$article->id)->where('actor_id',$actor->id)->first()){
-                    $ad = new ArticleDirector();
-                    $ad->article_id = $article->id;
-                    $ad->actor_id = $actor->id;
-                    $ad->save();
-                }
-                //bianju
-                if(isset($movie['bianju']))
-                {
-                    $actor = Actor::where('name',$movie['bianju'])->first();
-                    if (!$actor){
-                        $actor = new Actor();
-                        $actor->name=$movie['bianju'];
-                        $actor->save();
-                    }
-                    if (!ArticleWriter::where('article_id',$article->id)->where('actor_id',$actor->id)->first()){
-                        $ad = new ArticleWriter();
-                        $ad->article_id = $article->id;
-                        $ad->actor_id = $actor->id;
-                        $ad->save();
-                    }
-                }
-                if (isset($movie['zhuyan'] )) {
-                    foreach ($movie['zhuyan'] as $zhuyan) {
-                        $actor = Actor::where('name',$zhuyan)->first();
-                        if (!$actor){
-                            $actor = new Actor();
-                            $actor->name=$zhuyan;
-                            $actor->save();
-                        }
-                        if (!ArticleActor::where('article_id',$article->id)->where('actor_id',$actor->id)->first()){
-                            $ad = new ArticleActor();
-                            $ad->article_id = $article->id;
-                            $ad->actor_id = $actor->id;
-                            $ad->save();
-                        }
-                    }
-                }
 
-                //cate
-                foreach ($movie['cate'] as $cate) {
-                    $actor = Category::where('name',$cate)->first();
-                    if (!$actor){
-                        $actor = new Category();
-                        $actor->name=$cate;
-                        $actor->save();
-                    }
-                    if (!ArticleCate::where('article_id',$article->id)->where('category_id',$actor->id)->first()){
-                        $ad = new ArticleCate();
-                        $ad->article_id = $article->id;
-                        $ad->category_id = $actor->id;
-                        $ad->save();
-                    }
-                }
-                //area
-                $aa = ArticleArea::where('title',$movie['area'])->where('article_id',$article->id)->first();
-                if (!$aa){
-                    $aa = new ArticleArea();
-                    $aa->title=$movie['area'];
-                    $aa->article_id=$item->id;
-                    $aa->save();
-                }
                 //tag
-                foreach ($movie['tags'] as $tag) {
+                foreach ($detail['tags'] as $tag) {
                     $actor = Tag::where('name',$tag)->first();
                     if (!$actor){
                         $actor = new Tag();
@@ -394,7 +184,18 @@ class Piaohua extends Command
                     }
                 }
                 //alias
-                foreach ($movie['alias'] as $title) {
+                $a = [];
+                foreach ($detail['names'] as $name)
+                {
+                    if (is_array($name)) {
+                        foreach ($name as $n){
+                            $a[] = $n;
+                        }
+                    }else{
+                        $a[] = $name;
+                    }
+                }
+                foreach ($a as $title) {
                     if (!ArticleAliase::where('article_id',$article->id)->where('title',$title)->first()){
                         $ad = new ArticleAliase();
                         $ad->article_id = $article->id;
@@ -403,7 +204,7 @@ class Piaohua extends Command
                     }
                 }
                 //download
-                foreach ($movie['downloads'] as $url) {
+                foreach ($detail['downloads'] as $url) {
                     if (!ArticleDownload::where('article_id',$article->id)->where('url',$url)->first()){
                         $ad = new ArticleDownload();
                         $ad->article_id = $article->id;

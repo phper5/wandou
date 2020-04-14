@@ -121,7 +121,8 @@ class Piaohua extends Command
                 ->where('cate','!=','lianxiju')
                 ->where('type',2)
 //                ->where('id',14244)
-                ->orderBy(\DB::raw('RAND()'))
+//                ->orderBy(\DB::raw('RAND()'))
+                ->orderBy('id','desc')
                 ->limit(10)->get();
 
             foreach ($list as $item)
@@ -160,19 +161,32 @@ class Piaohua extends Command
                 //exit;
                 $article = new Article();
                 $article->title = $item->title;
-                $article->html = $item->title;
-                $article->markdown = $item->title;
-                $article->release_time = '';
-                $article->cover = $item->cover;
-                $article->thumb = $item->cover;
+                $article->html = $detail['desc']??'';
+                $article->markdown = $detail['desc']??'';
                 $article->language = '';
-                $article->duration = 0;
-                $article->imdb = 0;
                 $article->slug = $item->title;
                 $article->douban_url = $url;
+                $article->duration =  $detail['duration'];
+                $article->imdb =  $detail['imdb'];
+                $article->release_time =  $detail['niandai']??'';
+                $small = $this->download($detail['cover'],'images/cover');
+                $article->cover = $small;
+                $article->thumb = $small;
+                $article->douban_type=3;
                 $article->save();
                 $item->artice_id=$article->id;
                 $item->save();
+
+                if ($detail['country']) {
+                    $aa = ArticleArea::where('title',$detail['country'])->where('article_id',$article->id)->first();
+                    if (!$aa){
+                        $aa = new ArticleArea();
+                        $aa->title=$detail['country'];
+                        $aa->article_id=$item->id;
+                        $aa->save();
+                    }
+                }
+
                 //daoyan
 
                 //tag
@@ -221,7 +235,45 @@ class Piaohua extends Command
                         $ad->save();
                     }
                 }
-                echo "end\n";
+
+                //
+                if (isset($detail['daoyan']) && $detail['daoyan']) {
+                    foreach ($detail['daoyan'] as $p){
+                        $actor = Actor::where('name',$p)->first();
+                        if (!$actor){
+                            $actor = new Actor();
+                            $actor->name=$p;
+                            $actor->save();
+                        }
+                        if (!ArticleDirector::where('article_id',$article->id)->where('actor_id',$actor->id)->first()){
+                            $ad = new ArticleDirector();
+                            $ad->article_id = $article->id;
+                            $ad->actor_id = $actor->id;
+                            $ad->save();
+                        }
+                    }
+                }
+                else{
+                    $debug =true;
+                }
+
+                foreach ($detail['zhuyan'] as $p){
+                    $actor = Actor::where('name',$p)->first();
+                    if (!$actor){
+                        $actor = new Actor();
+                        $actor->name=$p;
+                        $actor->save();
+                    }
+                    if (!ArticleActor::where('article_id',$article->id)->where('actor_id',$actor->id)->first()){
+                        $ad = new ArticleActor();
+                        $ad->article_id = $article->id;
+                        $ad->actor_id = $actor->id;
+                        $ad->save();
+                    }
+                }
+
+
+
                 $item->type=3;
                 $item->save();
                 sleep(1);

@@ -116,10 +116,10 @@ class Piaohua extends Command
         while ($f==1)
         {
             $f=0;
-            $list = \App\Models\Piaohua::where('type',2)
+            $list = \App\Models\Piaohua::where('type',5)
                 ->where('cate','!=','dianshiju')
                 ->where('cate','!=','lianxiju')
-                ->where('type',5)
+
 //                ->where('id',14244)
                 ->orderBy(\DB::raw('RAND()'))
 //                ->orderBy('id','desc')

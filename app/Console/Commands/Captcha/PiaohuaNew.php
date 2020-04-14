@@ -41,23 +41,25 @@ class PiaohuaNew extends Command
         $dom = HtmlDomParser::file_get_html($url);
 //            echo $dom;
 
-        $movie_lsit = $dom->find(".col-md-9 ul.ul-imgtxt2 li.col-md-6");
+        $movie_lsit = $dom->find(".ul-imgtxt1.row   li.col-sm-4");
+        $i=0;
         foreach ($movie_lsit as $movie) {
             //echo $movie;
             $pic = $movie->find(".pic img",0);
             $src =  $pic->src;
-            $title = $movie->find("h3 b",0);
+            $title = $movie->find(".txt font",0);
+//            if (!$title) {
+//                $title = $movie->find("h3 font",0);
+//            }
             if (!$title) {
-                $title = $movie->find("h3 font",0);
-            }
-            if (!$title) {
-                $title = $movie->find("h3 a",0);
+                $title = $movie->find("h3",0);
             }
             $title = $title->plaintext;
             echo $title.' ';
-            $url = $movie->find("h3 a",0);
+            $url = $movie->find("a",0);
             $url = $url->href;
 
+            echo $src;echo $title;echo $url;
             if (!\App\Models\Piaohua::where('url',$url)->first()) {
                 $ph = new \App\Models\Piaohua();
                 $ph->title = $title;

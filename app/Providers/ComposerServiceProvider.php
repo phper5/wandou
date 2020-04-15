@@ -99,7 +99,7 @@ class ComposerServiceProvider extends ServiceProvider
         //分配前台通用的数据
         view()->composer('layouts/home', function ($view) use ($socialiteClients) {
             $category = Category::select('id', 'name', 'slug')->orderBy('sort')->get();
-            $tag = Tag::has('articles')->withCount('articles')->get();
+            $tag = Tag::has('articles')->limit(40)->withCount('articles')->get();
 
             $topArticle = Article::select('id', 'title', 'slug')
                 ->where('is_top', 1)

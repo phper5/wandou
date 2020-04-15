@@ -75,7 +75,7 @@
                 <div class="row download">
                     <div class="title">下载地址</div>
                     <ul class="row">
-                        <?php foreach ($article->downloads as $a) { echo '<li class="col-xs-12">'.$a->url.'<li>';} ?>
+                        <?php foreach ($article->downloads as $a) { echo '<li class="col-xs-12"><a href="'.$a->url.'">'.$a->url.'</a><li>';} ?>
 
                     </ul>
                 </div>

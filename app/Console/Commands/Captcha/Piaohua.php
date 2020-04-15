@@ -264,6 +264,7 @@ class Piaohua extends Command
                     $debug =true;
                 }
 
+                if (isset($detail['zhuyan'])&&$detail['zhuyan'])
                 foreach ($detail['zhuyan'] as $p){
                     $actor = Actor::where('name',$p)->first();
                     if (!$actor){

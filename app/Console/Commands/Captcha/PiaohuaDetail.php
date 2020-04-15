@@ -84,7 +84,7 @@ class PiaohuaDetail extends Command
                 $f=1;
                 $url = 'https://www.piaohua.com'.$item->url;
 //                $url = 'https://www.piaohua.com/html/juqing/2019/1220/42951.html';
-                $url = 'https://www.piaohua.com/html/dongzuo/2015/1006/30226.html';
+//                $url = 'https://www.piaohua.com/html/dongzuo/2015/1006/30226.html';
                 echo "\n".$url;
 		$htmlurl = $url;
 		echo "\n".$item->id;
@@ -382,7 +382,7 @@ class PiaohuaDetail extends Command
                     'desc'=>(isset($desc)&&$desc)?$desc:$movie_info->plaintext,
                 ];
                 print_r($data);
-                exit;
+//                exit;
                 $item->detail = json_encode($data);
                 $item->type=2;
                 $item->save();

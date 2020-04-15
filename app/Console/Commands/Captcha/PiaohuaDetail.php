@@ -59,6 +59,8 @@ class PiaohuaDetail extends Command
             $pattern = '/[a-zA-Z\.]/u';
             $z = preg_replace($pattern, '', $z);
         }
+        $z = str_replace('-','',$z);
+        $z = str_replace('&nbsp;','',$z);
         $z = trim($z);
         $z = trim($z,"\t");
         return $z;
@@ -81,7 +83,9 @@ class PiaohuaDetail extends Command
                 echo 'getdata';
                 $f=1;
                 $url = 'https://www.piaohua.com'.$item->url;
-                echo $url;
+//                $url = 'https://www.piaohua.com/html/juqing/2019/1220/42951.html';
+//                $url = 'https://www.piaohua.com/html/kehuan/2009/0521/15400.html';
+                echo "\n".$url;
 		$htmlurl = $url;
 		echo "\n".$item->id;
                 try{
@@ -98,6 +102,9 @@ class PiaohuaDetail extends Command
                 if ($img)
                 {
                     $cover = $img->src;
+                    if (!strstr($cover,'http')) {
+                        $cover='https://www.piaohua.com'.$cover;
+                    }
                 }
                 $divs = $movie_info->find("div");
                 $douban = '';
@@ -110,92 +117,223 @@ class PiaohuaDetail extends Command
                 $niandai='';
                 $downloads = [];
                 $i =0;
+                $daoyan = $zhuyan =[];
 
-                for ($i=0;$i<count($divs);$i++)
-                {
-                    $div = $divs[$i];
-                    $txt = str_replace('　','',$div->plaintext);
-                    $txt = trim($txt);
-                    if (strstr($txt,'◎译名')){
-                        $yiming = substr($txt,strlen('◎译名'));
-                        $names = explode('/',$yiming);
-                    }
-                    if (strstr($txt,'◎年代')){
-                        $yiming = substr($txt,strlen('◎年代'));
-                        $niandai = $yiming;
-                        if (empty($niandai)){
-                            echo $item->id;
-                            echo $htmlurl."\n";
-                            //die('no nian dai ');
-                            $niandai='';
+                if (count($divs)>4) {
+                    for ($i=0;$i<count($divs);$i++)
+                    {
+                        $div = $divs[$i];
+                        $txt = str_replace('　','',$div->plaintext);
+                        $txt = str_replace('演员','主演',$txt);
+                        $txt = trim($txt);
+
+                        if ($dd = strstr($txt,'译名')){
+                            $yiming = substr($dd,strlen('译名'));
+                            $names = explode('/',$yiming);
                         }
-                    }
-                    if (strstr($txt,'◎片名')){
-                        $yiming = substr($txt,strlen('◎片名'));
-                        $names[] = $yiming;
-                    }
-                    if (strstr($txt,'◎产地')){
-                        $yiming = substr($txt,strlen('◎产地'));
-                        $country = $yiming;
-                    }
-                    if (strstr($txt,'◎类别')){
+                        if ($dd = strstr($txt,'年代')){
+                            $yiming = substr($dd,strlen('年代'));
+                            $niandai = $yiming;
+                            if (empty($niandai)){
+                                echo $item->id;
+                                echo $htmlurl."\n";
+                                //die('no nian dai ');
+                                $niandai='';
+                            }
+                        }
+                        if ($dd = strstr($txt,'片名')){
+                            $yiming = substr($dd,strlen('片名'));
+                            $names[] = $yiming;
+                        }
+                        if ($dd = strstr($txt,'产地')){
+                            $yiming = substr($dd,strlen('产地'));
+                            $country = $yiming;
+                        }
+                        if ($dd = strstr($txt,'类别')){
 
-                        $yiming = substr($txt,strlen('◎类别'));
-                        $cates = explode('/',$yiming);
-                    }
-                    if (strstr($txt,'◎IMDb链接')){
-                        $yiming = substr($txt,strlen('◎IMDb链接'));
-                        $imdb = trim($yiming,'&nbsp;');
-                    }
-                    if (strstr($txt,'◎豆瓣链接')){
-                        $douban = substr($txt,strlen('◎豆瓣链接'));
-                    }
-                    if (strstr($txt,'◎片长')){
-                        $yiming = substr($txt,strlen('◎片长'));
-                        $duration =  $yiming;
-                    }
-                    if (strstr($txt,'◎标签')){
-                        // echo $div;exit;
-                        //echo $txt."\n";
-                        $yiming = substr($txt,strlen('◎标签'));
-                        $tags = explode('|',$yiming);
-                    }
-                    if ($dy = strstr($div->plaintext,'◎导　　演')){
-                        $yiming = substr($dy,strlen('◎导　　演'));
-                        $yiming  = str_replace('　','',$yiming);
-                        $yiming = trim($yiming);
-                        $daoyan = explode('/',$yiming);
-                    }
-                    if ($zz = strstr($div->plaintext,'◎主　　演')){
-                        $z = substr($zz,strlen('◎主　　演'));
-                        $zhuyan = [];
-                        $zhuyan[] = $this->getDName($z);
-                        $i++;
-                        while (strstr($divs[$i]->plaintext,'	　　　　')) {
-                            $z = trim($divs[$i]->plaintext);
-                            $zhuyan[] =  $this->getDName($z);
+                            $yiming = substr($dd,strlen('类别'));
+                            $cates = explode('/',$yiming);
+                        }
+                        if ($dd = strstr($txt,'IMDb链接')){
+                            $yiming = substr($dd,strlen('IMDb链接'));
+                            $imdb = trim($yiming,'&nbsp;');
+                        }
+                        if (strstr($txt,'豆瓣链接')){
+                            $douban = substr($txt,strlen('豆瓣链接'));
+                        }
+                        if ($dd = strstr($txt,'片长')){
+                            $yiming = substr($dd,strlen('片长'));
+                            $duration =  $yiming;
+                        }
+                        if ($dd = strstr($txt,'标签')){
+                            // echo $div;exit;
+                            //echo $txt."\n";
+                            $yiming = substr($dd,strlen('标签'));
+                            $tags = explode('|',$yiming);
+                        }
+                        if (($dy = strstr($txt,'导演')) &&empty($daoyan)){
+                            $yiming = substr($dy,strlen('导演'));
+                            $yiming  = str_replace('　','',$yiming);
+                            $yiming = trim($yiming);
+                            $daoyan = explode('/',$yiming);
+                        }
+                        if (($zz = strstr($txt,'主演')) &&empty($zhuyan)){
+                            $z = substr($zz,strlen('主演'));
+                            $z = $this->getDName($z);
+                            $zhuyan = [];
+                            if (strstr($z,"|")) {
+                                $zhuyan = explode('|',$z);
+                            }else{
+                                $zhuyan = explode('/',$z);
+                            }
+
                             $i++;
-                        }
-                        $i--;
-                        continue;
-                    }
-                    if (strstr($txt,'◎简')){
-                        $i++;
-                        if (!isset($divs[$i])) {
-                            $desc = $txt;
-                        }else{
-                            $t = trim($divs[$i]->plaintext);
-                            $t = str_replace('&nbsp;','',$t);
-                            $t = trim($t);
-                            while (empty($t)) {
+                            $str = $divs[$i]->plaintext;
+                            $str = str_replace('&nbsp;','',$str);
+                            while (strstr($str,'	　　　　') || empty(trim($str))) {
+                                $z = ($str);
                                 $i++;
-                                if (!isset($divs[$i])) continue;
+                                $str = $divs[$i]->plaintext;
+                                $str = str_replace('&nbsp;','',$str);
+                                if (empty(trim($z))){
+                                    continue;
+                                }
+                                $zhuyan[] =  $this->getDName($z);
+
+                            }
+                            $i--;
+                            continue;
+                        }
+                        if ($jj = strstr($txt,'简')){
+                            $i++;
+                            if (!isset($divs[$i])) {
+                                $desc = substr($jj,strlen('简'));
+                            }else{
                                 $t = trim($divs[$i]->plaintext);
                                 $t = str_replace('&nbsp;','',$t);
                                 $t = trim($t);
+                                while (empty($t)) {
+                                    $i++;
+                                    if (!isset($divs[$i])) break;
+                                    $t = trim($divs[$i]->plaintext);
+                                    $t = str_replace('&nbsp;','',$t);
+                                    $t = trim($t);
+                                }
+                                $desc =  trim($divs[$i]->plaintext);
                             }
-                            $desc =  trim($divs[$i]->plaintext);
+
                         }
+                    }
+
+
+                }else{
+                                   $txt = $movie_info->plaintext;;
+                    $lines = explode("\n",$txt);
+                    $i = 0;
+                    for ($i=0;$i<count($lines);$i++){
+
+
+                            $div = $lines[$i];
+                            $txt = str_replace('　','',$div);
+                        $txt = str_replace('演员','主演',$txt);
+                            $txt = trim($txt);
+                            if ($dd = strstr($txt,'译名')){
+                                $yiming = substr($dd,strlen('译名'));
+                                $names = explode('/',$yiming);
+                            }
+                            if ($dd = strstr($txt,'年代')){
+                                $yiming = substr($dd,strlen('年代'));
+                                $niandai = $yiming;
+                                if (empty($niandai)){
+                                    echo $item->id;
+                                    echo $htmlurl."\n";
+                                    //die('no nian dai ');
+                                    $niandai='';
+                                }
+                            }
+                            if ($dd = strstr($txt,'片名')){
+                                $yiming = substr($dd,strlen('片名'));
+                                $names[] = $yiming;
+                            }
+                            if ($dd=strstr($txt,'产地')){
+                                $yiming = substr($dd,strlen('产地'));
+                                $country = $yiming;
+                            }
+                            if ($dd = strstr($txt,'类别')){
+
+                                $yiming = substr($dd,strlen('类别'));
+                                $cates = explode('/',$yiming);
+                            }
+                            if ($dd = strstr($txt,'IMDb链接')){
+                                $yiming = substr($dd,strlen('IMDb链接'));
+                                $imdb = trim($yiming,'&nbsp;');
+                            }
+                            if ($dd = strstr($txt,'豆瓣链接')){
+                                $douban = substr($dd,strlen('豆瓣链接'));
+                            }
+                            if ($dd = strstr($txt,'片长')){
+                                $yiming = substr($dd,strlen('片长'));
+                                $duration =  $yiming;
+                            }
+                            if ($dd =strstr($txt,'标签')){
+                                // echo $div;exit;
+                                //echo $txt."\n";
+                                $yiming = substr($dd,strlen('标签'));
+                                $tags = explode('|',$yiming);
+                            }
+                            if (($dy = strstr($txt,'导演')) && empty($daoyan)){
+                                $yiming = substr($dy,strlen('导演'));
+                                $yiming  = str_replace('　','',$yiming);
+                                $yiming = trim($yiming);
+                                $daoyan = explode('/',$yiming);
+                            }
+                            if (($zz = strstr($txt,'主演')) &&empty($zhuyan)){
+                                $z = substr($zz,strlen('主演'));
+                                $zhuyan = [];
+                                $z = $this->getDName($z);
+                                if (strstr($z,"|")) {
+                                    $zhuyan = explode('|',$z);
+                                }else{
+                                    $zhuyan = explode('/',$z);
+                                }
+
+                                $i++;
+                                $str = $lines[$i];
+                                $str = str_replace('&nbsp;','',$str);
+                                while (strstr($str,'　　　　')!==false || empty(trim($str))) {
+                                    $z = ($str);
+
+                                    $i++;
+                                    $str = $lines[$i];
+                                    $str = str_replace('&nbsp;','',$str);
+                                    if (empty(trim($z))){
+                                        continue;
+                                    }
+                                    $zhuyan[] =  $this->getDName($z);
+
+                                }
+                                $i--;
+                                continue;
+                            }
+                            if ($jj = strstr($txt,'简')){
+                                $i++;
+                                if (!isset($lines[$i])) {
+                                    $desc = substr($jj,strlen('简'));
+                                }else{
+                                    $t = trim($lines[$i]);
+                                    $t = str_replace('&nbsp;','',$t);
+                                    $t = trim($t);
+                                    while (empty($t)) {
+                                        $i++;
+                                        if (!isset($lines[$i])) break;
+                                        $t = trim($lines[$i]);
+                                        $t = str_replace('&nbsp;','',$t);
+                                        $t = trim($t);
+                                    }
+                                    $desc =  trim($lines[$i]??'');
+                                }
+
+                            }
 
                     }
                 }
@@ -227,6 +365,7 @@ class PiaohuaDetail extends Command
                     continue;
                 }
 
+
                 $data = [
                     'names'=>$names,
                     'tags'=>$tags,
@@ -240,12 +379,14 @@ class PiaohuaDetail extends Command
                     'cover'=>$cover,
                     'daoyan'=>$daoyan??[],
                     'zhuyan'=>$zhuyan??[],
-                    'desc'=>$desc,
+                    'desc'=>(isset($desc)&&$desc)?$desc:$movie_info->plaintext,
                 ];
+                print_r($data);
+//                exit;
                 $item->detail = json_encode($data);
                 $item->type=2;
                 $item->save();
-                print_r($data);
+
                 echo $item->id;
                 echo $htmlurl;
                 sleep(1);

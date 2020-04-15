@@ -105,6 +105,13 @@ class Piaohua extends Command
         return $output;
     }
 
+    public function format($name)
+    {
+        $name = str_replace('-','',$name);
+        $name = str_replace('&nbsp;','',$name);
+        $name = trim($name);
+        return $name;
+    }
     /**
      * Execute the console command.
      *

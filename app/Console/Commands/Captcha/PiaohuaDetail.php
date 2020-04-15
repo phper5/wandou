@@ -188,6 +188,7 @@ class PiaohuaDetail extends Command
                             }
 
                             $i++;
+                            if (!isset($divs[$i])) continue;
                             $str = $divs[$i]->plaintext;
                             $str = str_replace('&nbsp;','',$str);
                             while (strstr($str,'	　　　　') || empty(trim($str))) {
@@ -298,12 +299,14 @@ class PiaohuaDetail extends Command
                                 }
 
                                 $i++;
+                                if (!isset($lines[$i])) break;
                                 $str = $lines[$i];
                                 $str = str_replace('&nbsp;','',$str);
                                 while (strstr($str,'　　　　')!==false || empty(trim($str))) {
                                     $z = ($str);
 
                                     $i++;
+                                    if (!isset($lines[$i])) break;
                                     $str = $lines[$i];
                                     $str = str_replace('&nbsp;','',$str);
                                     if (empty(trim($z))){

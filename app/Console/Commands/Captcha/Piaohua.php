@@ -152,11 +152,11 @@ class Piaohua extends Command
                 print_r($item);
                 print_r($detail);
                 //echo $url;;
-                if (empty($url)) {
-                    $item->type=5;
-                    $item->save();
-                    continue;
-                }
+//                if (empty($url)) {
+//                    $item->type=5;
+//                    $item->save();
+//                    continue;
+//                }
                 $url = str_replace('&bnsp;','',$url);
                 $url = str_replace('&nbsp;','',$url);
                 $url = trim($url);

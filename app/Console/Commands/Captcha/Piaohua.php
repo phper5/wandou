@@ -178,7 +178,12 @@ class Piaohua extends Command
                 $article->imdb =  $detail['imdb'];
                 $article->release_time =  $detail['niandai']??'';
                 echo "cover";
-                $small = $this->download($detail['cover'],'images/cover');
+                try {
+                    $small = $this->download($detail['cover'],'images/cover');
+                }catch (\Exception $e){
+                    $small = '';
+                }
+
                 $article->cover = $small;
                 $article->thumb = $small;
                 $article->douban_type=3;

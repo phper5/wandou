@@ -176,14 +176,16 @@ class Piaohua extends Command
                 $article->duration =  $detail['duration'];
                 $article->imdb =  $detail['imdb'];
                 $article->release_time =  $detail['niandai']??'';
+                echo "cover";
                 $small = $this->download($detail['cover'],'images/cover');
                 $article->cover = $small;
                 $article->thumb = $small;
                 $article->douban_type=3;
                 $article->save();
+                echo "save";
                 $item->artice_id=$article->id;
                 $item->save();
-
+                echo "setp2";
                 if ($detail['country']) {
                     $aa = ArticleArea::where('title',$detail['country'])->where('article_id',$article->id)->first();
                     if (!$aa){
@@ -195,7 +197,7 @@ class Piaohua extends Command
                 }
 
                 //daoyan
-
+                echo "tags";
                 //tag
                 foreach ($detail['tags'] as $tag) {
                     $actor = Tag::where('name',$tag)->first();
@@ -213,6 +215,7 @@ class Piaohua extends Command
                     }
                 }
                 //alias
+                echo "names";
                 $a = [];
                 foreach ($detail['names'] as $name)
                 {
@@ -232,6 +235,7 @@ class Piaohua extends Command
                         $ad->save();
                     }
                 }
+                echo "downloads";
                 //download
                 foreach ($detail['downloads'] as $url) {
                     if (!ArticleDownload::where('article_id',$article->id)->where('url',$url)->first()){

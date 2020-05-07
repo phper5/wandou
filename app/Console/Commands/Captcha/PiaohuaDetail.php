@@ -76,8 +76,8 @@ class PiaohuaDetail extends Command
         while ($f==1)
         {
             $f=0;
-            $list = \App\Models\Piaohua::where('type',5)->where('cate','!=','dianshiju')->limit(100)->get();
-
+            //$list = \App\Models\Piaohua::where('type',5)->where('cate','!=','dianshiju')->limit(100)->get();
+            $list = \App\Models\Piaohua::where('type',5)->where('cate','!=','dianshiju')->orderBy(\DB::raw('RAND()'))->limit(100)->get();
             foreach ($list as $item)
             {
                 echo 'getdata';

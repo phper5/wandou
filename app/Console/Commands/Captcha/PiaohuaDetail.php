@@ -194,6 +194,7 @@ class PiaohuaDetail extends Command
                             while (strstr($str,'	　　　　') || empty(trim($str))) {
                                 $z = ($str);
                                 $i++;
+                                if (!isset($divs[$i])) continue;
                                 $str = $divs[$i]->plaintext;
                                 $str = str_replace('&nbsp;','',$str);
                                 if (empty(trim($z))){

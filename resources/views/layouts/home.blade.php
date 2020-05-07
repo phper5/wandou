@@ -167,5 +167,15 @@
 <script src="{{ mix('js/app.js') }}"></script>
 {!! htmlspecialchars_decode(config('bjyblog.statistics')) !!}
 @yield('js')
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-165843513-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-165843513-1');
+</script>
+
 </body>
 </html>
